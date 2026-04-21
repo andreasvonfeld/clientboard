@@ -7,14 +7,18 @@ import { RelancesPage } from './pages/RelancesPage';
 export type AppSection = 'clients' | 'pipeline' | 'relances' | 'dashboard';
 
 const nav: { id: AppSection; label: string; hint: string }[] = [
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    hint: 'Totaux, répartition par statut, barres %',
+  },
   { id: 'clients', label: 'Clients', hint: 'Liste et fiches' },
   { id: 'pipeline', label: 'Pipeline', hint: 'À venir' },
   { id: 'relances', label: 'Relances', hint: 'À venir' },
-  { id: 'dashboard', label: 'Dashboard', hint: 'À venir' },
 ];
 
 export function App() {
-  const [section, setSection] = useState<AppSection>('clients');
+  const [section, setSection] = useState<AppSection>('dashboard');
 
   return (
     <div className="flex h-screen min-h-0 bg-[#1a1d23] text-[#e8eaed]">
