@@ -3,10 +3,10 @@ import path from 'node:path';
 
 export function createMainWindow(): BrowserWindow {
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 640,
-    minWidth: 640,
-    minHeight: 480,
+    width: 1200,
+    height: 800,
+    minWidth: 800,
+    minHeight: 560,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,

@@ -28,22 +28,25 @@
     "@electron-forge/plugin-fuses": "^7.11.1",
     "@electron-forge/plugin-vite": "^7.11.1",
     "@electron/fuses": "^1.8.0",
+    "@tailwindcss/postcss": "^4.2.3",
     "@types/electron-squirrel-startup": "^1.0.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
+    "@vitejs/plugin-react": "^4.3.4",
     "electron": "41.1.1",
     "eslint": "^8.57.1",
     "eslint-plugin-import": "^2.32.0",
+    "postcss": "^8.5.10",
+    "tailwindcss": "^4.2.3",
     "typescript": "~4.5.4",
-    "vite": "^5.4.21",
-    "@vitejs/plugin-react": "^4.3.4"
+    "vite": "^5.4.21"
   },
   "dependencies": {
-    "sql.js": "^1.12.0",
     "electron-squirrel-startup": "^1.0.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "sql.js": "^1.12.0"
   }
 }

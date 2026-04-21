@@ -1,23 +1,39 @@
 import { ipcMain } from 'electron';
 import type { ClientInput } from '../../shared/types';
 import * as clients from './clients.service';
+import { exportClientsCsv } from './export-csv';
 
+/** Canaux IPC — alignement PDF : `clients:getAll`, `clients:create`, `clients:delete`. */
 const channels = {
-  list: 'clients:list',
+  getAll: 'clients:getAll',
+  /** Ancien nom (alias) — évite erreur si bundle main obsolète côté dev. */
+  listLegacy: 'clients:list',
   get: 'clients:get',
   create: 'clients:create',
   update: 'clients:update',
-  remove: 'clients:remove',
+  delete: 'clients:delete',
+  exportCsv: 'clients:exportCsv',
 } as const;
 
+function safeHandle(
+  channel: string,
+  listener: (...args: unknown[]) => unknown,
+): void {
+  ipcMain.removeHandler(channel);
+  ipcMain.handle(channel, listener as never);
+}
+
 export function registerIpcHandlers(): void {
-  ipcMain.handle(channels.list, () => clients.list());
-  ipcMain.handle(channels.get, (_event, id: number) => clients.getById(id));
-  ipcMain.handle(channels.create, (_event, input: ClientInput) =>
+  const listHandler = () => clients.list();
+  safeHandle(channels.getAll, listHandler);
+  safeHandle(channels.listLegacy, listHandler);
+  safeHandle(channels.get, (_event, id: number) => clients.getById(id));
+  safeHandle(channels.create, (_event, input: ClientInput) =>
     clients.create(input),
   );
-  ipcMain.handle(channels.update, (_event, id: number, input: ClientInput) =>
+  safeHandle(channels.update, (_event, id: number, input: ClientInput) =>
     clients.update(id, input),
   );
-  ipcMain.handle(channels.remove, (_event, id: number) => clients.remove(id));
+  safeHandle(channels.delete, (_event, id: number) => clients.remove(id));
+  safeHandle(channels.exportCsv, () => exportClientsCsv());
 }

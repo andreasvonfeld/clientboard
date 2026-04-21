@@ -99,5 +99,5 @@ dist/
 # Electron-Forge
 out/
 
-# Fichiers perso / prompts locaux — ne pas versionner ni pousser
+# clientboard/PROMPTS-RESTANT-TP.md — liste de prompts TP (local uniquement, ne pas commit / push)
 PROMPTS-RESTANT-TP.md

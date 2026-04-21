@@ -9,8 +9,10 @@ if (started) {
 }
 
 app.whenReady().then(async () => {
-  await initDatabase();
+  // IPC avant init DB : les invocations n’arrivent qu’après createMainWindow ;
+  // évite tout cas où le renderer serait prêt sans handlers (rebuild / hot reload).
   registerIpcHandlers();
+  await initDatabase();
   createMainWindow();
 });
 

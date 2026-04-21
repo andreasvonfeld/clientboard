@@ -10,7 +10,7 @@ export function useClients() {
     setLoading(true);
     setError(null);
     try {
-      const list = await window.api.clients.list();
+      const list = await window.api.clients.getAll();
       setClients(list);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erreur chargement clients');
