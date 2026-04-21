@@ -13,7 +13,11 @@ const nav: { id: AppSection; label: string; hint: string }[] = [
     hint: 'Totaux, répartition par statut, barres %',
   },
   { id: 'clients', label: 'Clients', hint: 'Liste et fiches' },
-  { id: 'pipeline', label: 'Pipeline', hint: 'À venir' },
+  {
+    id: 'pipeline',
+    label: 'Pipeline',
+    hint: 'Kanban par statut · glisser-déposer',
+  },
   { id: 'relances', label: 'Relances', hint: 'À venir' },
 ];
 
