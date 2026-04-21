@@ -18,7 +18,11 @@ const nav: { id: AppSection; label: string; hint: string }[] = [
     label: 'Pipeline',
     hint: 'Kanban par statut · glisser-déposer',
   },
-  { id: 'relances', label: 'Relances', hint: 'À venir' },
+  {
+    id: 'relances',
+    label: 'Relances',
+    hint: 'Prospects & inactifs · actions rapides',
+  },
 ];
 
 export function App() {
