@@ -1,24 +1,8 @@
 import { useMemo, useState } from 'react';
-import type { Client, ClientStatus } from '../../shared/types';
+import type { ClientStatus } from '../../shared/types';
 import { CLIENT_STATUS_LABELS } from '../../shared/types';
 import { useClients } from '../hooks/useClients';
-
-const STATUSES: ClientStatus[] = ['prospect', 'active', 'inactive'];
-
-function groupByStatus(clients: Client[]): Record<ClientStatus, Client[]> {
-  const g: Record<ClientStatus, Client[]> = {
-    prospect: [],
-    active: [],
-    inactive: [],
-  };
-  for (const c of clients) {
-    g[c.status].push(c);
-  }
-  for (const s of STATUSES) {
-    g[s].sort((a, b) => a.name.localeCompare(b.name, 'fr'));
-  }
-  return g;
-}
+import { groupByStatus, STATUSES } from '../utils/pipeline';
 
 export function PipelinePage() {
   const { clients, loading, error, update } = useClients();

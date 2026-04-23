@@ -4,24 +4,9 @@ import { ClientCard } from '../components/ClientCard';
 import { useClients } from '../hooks/useClients';
 import type { ClientInput, ClientStatus } from '../../shared/types';
 import { CLIENT_STATUS_LABELS } from '../../shared/types';
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function normalize(s: string): string {
-  return s.trim().toLowerCase();
-}
-
-type FieldErrors = { name?: string; email?: string };
-
-function validateForm(name: string, email: string): FieldErrors {
-  const errors: FieldErrors = {};
-  const n = name.trim();
-  const em = email.trim();
-  if (!n) errors.name = 'Le nom est requis.';
-  if (!em) errors.email = "L'adresse e-mail est requise.";
-  else if (!EMAIL_RE.test(em)) errors.email = 'Format e-mail invalide.';
-  return errors;
-}
+import type { FieldErrors } from '../utils/client-form';
+import { isFormValid, validateForm } from '../utils/client-form';
+import { filterClients } from '../utils/client-search';
 
 export function ClientsPage() {
   const { clients, loading, error, create, update, remove } = useClients();
@@ -35,20 +20,9 @@ export function ClientsPage() {
   const [exportMsg, setExportMsg] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
 
-  const filtered = useMemo(() => {
-    const q = normalize(search);
-    if (!q) return clients;
-    return clients.filter((c) => {
-      const inName = normalize(c.name).includes(q);
-      const inEmail = normalize(c.email).includes(q);
-      return inName || inEmail;
-    });
-  }, [clients, search]);
+  const filtered = useMemo(() => filterClients(clients, search), [clients, search]);
 
-  const formValid =
-    name.trim().length > 0 &&
-    email.trim().length > 0 &&
-    EMAIL_RE.test(email.trim());
+  const formValid = isFormValid(name, email);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();

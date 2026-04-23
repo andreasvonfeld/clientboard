@@ -1,18 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Client, ClientStatus } from '../../shared/types';
 import { CLIENT_STATUS_LABELS } from '../../shared/types';
-
-function countByStatus(clients: Client[]): Record<ClientStatus, number> {
-  const base: Record<ClientStatus, number> = {
-    prospect: 0,
-    active: 0,
-    inactive: 0,
-  };
-  for (const c of clients) {
-    base[c.status] += 1;
-  }
-  return base;
-}
+import { countByStatus, toPercent } from '../utils/dashboard-stats';
 
 export function DashboardPage() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -43,8 +32,7 @@ export function DashboardPage() {
 
   const stats = useMemo(() => countByStatus(clients), [clients]);
   const total = clients.length;
-  const pctActive =
-    total > 0 ? Math.round((stats.active / total) * 100) : 0;
+  const pctActive = toPercent(stats.active, total);
 
   return (
     <div className="p-6">
@@ -147,7 +135,7 @@ function StatusBar(props: {
   total: number;
   color: string;
 }) {
-  const pct = props.total > 0 ? Math.round((props.count / props.total) * 100) : 0;
+  const pct = toPercent(props.count, props.total);
   return (
     <div>
       <div className="mb-1 flex justify-between text-sm text-[#c4c7cc]">
