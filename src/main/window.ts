@@ -7,6 +7,7 @@ export function createMainWindow(): BrowserWindow {
     height: 800,
     minWidth: 800,
     minHeight: 560,
+    show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -23,7 +24,15 @@ export function createMainWindow(): BrowserWindow {
     );
   }
 
-  mainWindow.webContents.openDevTools({ mode: 'detach' });
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+    mainWindow.focus();
+  });
+
+  // DevTools uniquement en dev (évite comportements parasites en build installé).
+  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    mainWindow.webContents.openDevTools({ mode: 'detach' });
+  }
 
   return mainWindow;
 }

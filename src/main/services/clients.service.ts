@@ -46,30 +46,24 @@ function asRow(o: Record<string, unknown>): {
 
 export function list(): Client[] {
   const database = getDatabase();
-  const stmt = database.prepare(
+  const rows = database
+    .prepare(
     `SELECT id, name, email, phone, status, created_at FROM clients ORDER BY created_at DESC`,
-  );
-  const rows: Client[] = [];
-  while (stmt.step()) {
-    rows.push(rowToClient(asRow(stmt.getAsObject() as Record<string, unknown>)));
-  }
-  stmt.free();
-  return rows;
+  )
+    .all() as Array<Record<string, unknown>>;
+  return rows.map((r) => rowToClient(asRow(r)));
 }
 
 export function getById(id: number): Client | null {
   const database = getDatabase();
-  const stmt = database.prepare(
-    `SELECT id, name, email, phone, status, created_at FROM clients WHERE id = ?`,
-  );
-  stmt.bind([id]);
-  if (!stmt.step()) {
-    stmt.free();
-    return null;
-  }
-  const row = asRow(stmt.getAsObject() as Record<string, unknown>);
-  stmt.free();
-  return rowToClient(row);
+  const row = database
+    .prepare(
+      `SELECT id, name, email, phone, status, created_at FROM clients WHERE id = ?`,
+    )
+    .get(id) as Record<string, unknown> | undefined;
+  if (!row) return null;
+  const mapped = asRow(row);
+  return rowToClient(mapped);
 }
 
 export function create(input: ClientInput): Client {
@@ -78,11 +72,10 @@ export function create(input: ClientInput): Client {
   const ins = database.prepare(
     `INSERT INTO clients (name, email, phone, status) VALUES (?, ?, ?, ?)`,
   );
-  ins.bind([input.name, input.email, input.phone ?? null, status]);
-  ins.step();
-  ins.free();
-  const idRes = database.exec('SELECT last_insert_rowid() AS id');
-  const id = Number(idRes[0].values[0][0]);
+  const result = ins.run(input.name, input.email, input.phone ?? null, status) as {
+    lastInsertRowid: number | bigint;
+  };
+  const id = Number(result.lastInsertRowid);
   persist();
   const created = getById(id);
   if (!created) {
@@ -99,9 +92,7 @@ export function update(id: number, input: ClientInput): Client | null {
   const stmt = database.prepare(
     `UPDATE clients SET name = ?, email = ?, phone = ?, status = ? WHERE id = ?`,
   );
-  stmt.bind([input.name, input.email, input.phone ?? null, status, id]);
-  stmt.step();
-  stmt.free();
+  stmt.run(input.name, input.email, input.phone ?? null, status, id);
   persist();
   return getById(id);
 }
@@ -111,9 +102,7 @@ export function remove(id: number): boolean {
   if (!ifExists) return false;
   const database = getDatabase();
   const stmt = database.prepare(`DELETE FROM clients WHERE id = ?`);
-  stmt.bind([id]);
-  stmt.step();
-  stmt.free();
+  stmt.run(id);
   persist();
   return true;
 }
